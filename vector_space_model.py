@@ -9,7 +9,14 @@ class VectorSpaceModel:
     def __init__(self, doc_dir) -> None:
         self.doc_list = self.load_docs(doc_dir)
         self.term_set = self.build_term_set()
+        self.term_doc_mat = self.build_term_doc_mat()
     
+    def build_term_doc_mat(self):
+        term_doc_mat = np.zeros((len(self.doc_list), len(self.term_set)), dtype=int)
+        for ind, doc in enumerate(self.doc_list):
+            term_doc_mat[ind] = self.doc2vec(doc)
+        return term_doc_mat
+
     def load_docs(self, doc_dir: str):
         doc_flist = os.listdir(doc_dir)
         doc_list = []
@@ -25,10 +32,10 @@ class VectorSpaceModel:
         return words
 
 
-    def build_term_set(self, doc_list: list[str]):
+    def build_term_set(self):
         term_set = {}
         ind = 0
-        for doc in doc_list:
+        for doc in self.doc_list:
             words = self.word_tokenize(doc)
             for w in words:
                 if w not in term_set:
